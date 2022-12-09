@@ -1,21 +1,30 @@
-from rest_framework.generics import CreateAPIView, ListAPIView, RetrieveAPIView, DestroyAPIView
+from rest_framework.generics import ListAPIView, RetrieveAPIView, DestroyAPIView
 from rest_framework.views import APIView
 from rest_framework.response import Response
-
+from rest_framework.viewsets import ModelViewSet
 
 from apps.cards.models import Card
 from apps.cards.serializers import CardSerializer
+from apps.products.models import Order, Product
+from apps.products.serializers import OrderSerializer, ProductSerializer
 from services.filtration import CardFilter
 from services.services import card_generator, convert_date_string_to_timedelta
 
 
-class CardListAndDestroyAPIView(ListAPIView, CreateAPIView, DestroyAPIView):
+class CardListAPIView(ListAPIView):
+    """ListAPIView модели Card"""
+
+    queryset = Card.objects.all()
+    serializer_class = CardSerializer
+    filterset_class = CardFilter
+
+
+class CardRetrieveAndDestroyAPIView(RetrieveAPIView, DestroyAPIView):
     """ListAPIView,DestroyAPIView модели Card"""
 
     queryset = Card.objects.all()
     serializer_class = CardSerializer
     lookup_field = 'number'
-    filterset_class = CardFilter
 
 
 class CardGenerator(APIView):
@@ -55,3 +64,18 @@ class CardActivateOrDeactivate(RetrieveAPIView):
             return Response({'message': f'Card ({card.number}) DEactivated!'}, 200)
         else:
             return Response({'message': f'Card ({card.number} is expired!)'}, 400)
+
+
+class ProductAPIViewSet(ModelViewSet):
+    """APIViewSet модели Product"""
+
+    queryset = Product.objects.all()
+    serializer_class = ProductSerializer
+
+
+class OrderAPIViewSet(ModelViewSet):
+    """APIViewSet модели Order с запрещенным изменением записи"""
+
+    queryset = Order.objects.all()
+    serializer_class = OrderSerializer
+    http_method_names = ['head', 'options', 'get', 'post', 'delete']

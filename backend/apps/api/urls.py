@@ -1,17 +1,23 @@
 from django.urls import path
 from rest_framework.routers import DefaultRouter
 
-from apps.api.views import CardListAndDestroyAPIView, CardGenerator, CardActivateOrDeactivate
+from apps.api.views import CardListAPIView, CardGenerator, CardActivateOrDeactivate, OrderAPIViewSet, \
+    ProductAPIViewSet, CardRetrieveAndDestroyAPIView
 
-# router = DefaultRouter()
+router = DefaultRouter()
 
-# router.register('card', CardViewSet, basename='card')
+router.register('products', ProductAPIViewSet, basename='product')
+router.register('orders', OrderAPIViewSet, basename='order')
 
-# urlpatterns = router.urls
+
 
 urlpatterns = [
-    path('card/generation/', CardGenerator.as_view()),
-    path('card/activation/<str:number>/', CardActivateOrDeactivate.as_view()),
-    path('card/', CardListAndDestroyAPIView.as_view()),
-    path('card/<str:number>/', CardListAndDestroyAPIView.as_view()),
+    path('cards/generation/', CardGenerator.as_view()),
+    path('cards/activation/<str:number>/', CardActivateOrDeactivate.as_view()),
+    path('cards/', CardListAPIView.as_view()),
+    path('cards/<str:number>/', CardRetrieveAndDestroyAPIView.as_view()),
+
+
 ]
+
+urlpatterns += router.urls

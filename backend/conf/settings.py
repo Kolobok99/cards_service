@@ -23,7 +23,8 @@ INSTALLED_APPS = [
 
     'apps.cards',
     'apps.api',
-    'apps.polls'
+    'apps.polls',
+    'apps.products',
 
 
 ]
