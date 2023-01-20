@@ -61,7 +61,7 @@ class CardActivateOrDeactivate(RetrieveAPIView):
         elif card.status == 'A':
             card.status = 'N'
             card.save()
-            return Response({'message': f'Card ({card.number}) DEactivated!'}, 200)
+            return Response({'message': f'Card ({card.number}) deactivated!'}, 200)
         else:
             return Response({'message': f'Card ({card.number} is expired!)'}, 400)
 
