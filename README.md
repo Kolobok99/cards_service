@@ -51,60 +51,24 @@ Cards Service - REST API для управления базой данных б�
 - celery==5.2.7  
 - redis==4.3.4
 - django-filter==22.1
+- django-debug-toolbar==3.8.1
 
 
-Запуск проекта
+Запуск проекта (в режиме разработки)
 ---
 1.  Клонировать проект и перейти в его корень:
 
 		git clone https://github.com/Kolobok99/cards_service
 		cd cards_service
 
-2. Создать директорию с .env.prod. файлами
-		
-	    cd backend
-		mkdir .env.prod
-		cd .env.prod
-
-3. Инициализировать .env.settings со следующими переменными:
-
-	    DEBUG=0
-		SECRET_KEY={your_secret_key}
-		DJANGO_ALLOWED_HOSTS={your_host_ip}
-
-        POSTGRES_NAME=cards_db
-	    POSTGRES_USER=manager
-	    POSTGRES_PASSWORD={your_sql_password}
-	    POSTGRES_HOST=db
-	    POSTGRES_PORT={your_sql_port}
-        
-		DATABASE=postgres
-        
-        REDIS_HOST=redis
-        REDIS_PORT=6379 
-
-4. Инициализировать .env.prod.db со следующими переменными:
-
-		POSTGRES_DB=stripe_db
-		POSTGRES_USER=manager
-		POSTGRES_PORT={your_sql_port}
-		POSTGRES_PASSWORD={your_sql_password}
-
-5. Инициализировать .env.prod.celery со следующими переменными:
-
-		DB_HOST=db
-		DB_NAME=cards_db
-		DB_USER=manager
-		DB_PASS={your_sql_password}
-
-6. Собрать проект
+2. Собрать проект
 
 		cd ../docker-composes
-		docker compose -f docker-compose.prod.yml build
+		docker compose -f docker-compose.yml build
 
-6. Запустить проект
+4. Запустить проект
 
-		docker compose -f docker-compose.prod.yml up
+		docker compose -f docker-compose.yml up
 
 
 Документация API:
@@ -122,7 +86,7 @@ Cards Service - REST API для управления базой данных б�
 
 	- GET  api/v1/cards/ - получить список всех карт
 	- POST api/v1/cards/generation/ - сгенерировать список карт
-	- GET  api/v1/cards/activation/{number}/ - активировать/деактивировать карту по ее number
 	- GET api/v1/cards/{number}/ - получить профиль карты с историей покупок по ее number
+	- GET  api/v1/cards/{number}/activation/ - активировать/деактивировать карту по ее number
 	- DELETE api/v1/cards/{number}/ удалить карту по ее number
 
