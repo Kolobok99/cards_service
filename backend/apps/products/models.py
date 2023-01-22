@@ -3,12 +3,10 @@ from django.db import models
 from apps.cards.models import Card
 
 
-# Create your models here.
-
 class Product(models.Model):
     """
     Вспомогательная модель Продуктов,
-    служащая для реализации логики покупок модели card.Card
+    служащая для реализации логики покупок
     """
 
     name = models.CharField("Наименование", max_length=16, unique=True)

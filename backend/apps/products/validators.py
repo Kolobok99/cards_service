@@ -6,10 +6,11 @@ class CardBalanceValidator:
         Валидатор OrderSerializer
 
         Args:
-            time_interval_start (Mailing.time_interval_start): начала временного интервала
-            time_interval_end (Mailing.time_interval_end): конец временного интервала
+            balance (Card.balance): баланс карты до покупки
+            price (Product.price): цена товара
+            count (int): кол-во покупаемых товаров
 
-        Если переданы оба значения, проверяет, что конец не превышает начала интервала
+        Проверяет достаточно ли денег для покупки товара(ов)
     """
 
     requires_context = True

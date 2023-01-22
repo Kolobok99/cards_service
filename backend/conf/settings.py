@@ -20,6 +20,7 @@ INSTALLED_APPS = [
 
     'rest_framework',
     'django_filters',
+    'debug_toolbar',
 
     'apps.cards',
     'apps.api',
@@ -37,6 +38,9 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
+
 ]
 
 ROOT_URLCONF = 'conf.urls'
@@ -114,4 +118,11 @@ REST_FRAMEWORK = {
     'DEFAULT_FILTER_BACKENDS': [
         'django_filters.rest_framework.DjangoFilterBackend'
     ]
+}
+
+INTERNAL_IPS = [
+    "127.0.0.1",
+]
+DEBUG_TOOLBAR_CONFIG = {
+    'SHOW_TOOLBAR_CALLBACK': lambda _request: DEBUG
 }

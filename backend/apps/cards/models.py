@@ -1,3 +1,4 @@
+import datetime
 from django.db import models
 
 
@@ -23,6 +24,32 @@ class Card(models.Model):
 
     def __str__(self):
         return self.number
+
+
+    @classmethod
+    def card_generator(cls, count: int, last_number: str, expiration_date: datetime.datetime):
+        """
+            Генерирует count Card с series и expiration_date
+
+            Args:
+                count (int): кол-во создаваемых карт
+                last_number (str): последняя карта с Card.series
+                expiration_date (datetime.datetime): дата до которой действительна карта
+            Returns
+                created cards (list) список созданный карт
+
+        """
+        series = last_number[:4]
+        int_last_number_without_series = int(last_number[4:])
+
+        cards = [cls(
+                    series=series,
+                    number=series + str(int_last_number_without_series + i).rjust(12, '0'),
+                    expiration_date=expiration_date,)
+                 for i in range(1, count+1)]
+
+        return cls.objects.bulk_create(cards)
+
 
     class Meta:
         verbose_name = 'Бонусная карта'

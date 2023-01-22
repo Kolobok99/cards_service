@@ -1,58 +1,45 @@
-from rest_framework.generics import ListAPIView, RetrieveAPIView, DestroyAPIView
-from rest_framework.views import APIView
+from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
 from apps.cards.models import Card
-from apps.cards.serializers import CardSerializer
+from apps.cards.serializers import CardSerializer, CardGeneratorSerializer
+
 from apps.products.models import Order, Product
 from apps.products.serializers import OrderSerializer, ProductSerializer
+
 from services.filtration import CardFilter
-from services.services import card_generator, convert_date_string_to_timedelta
 
 
-class CardListAPIView(ListAPIView):
-    """ListAPIView модели Card"""
-
-    queryset = Card.objects.all()
+class CardAPIViewSet(ModelViewSet):
+    """APIViewSet модели Card """
+    queryset = Card.objects.all().prefetch_related('orders')
     serializer_class = CardSerializer
+    lookup_field = 'number'
     filterset_class = CardFilter
 
-
-class CardRetrieveAndDestroyAPIView(RetrieveAPIView, DestroyAPIView):
-    """ListAPIView,DestroyAPIView модели Card"""
-
-    queryset = Card.objects.all()
-    serializer_class = CardSerializer
-    lookup_field = 'number'
-
-
-class CardGenerator(APIView):
-    """Контроллер генерации карт"""
-
-    def post(self, request, *args, **kwargs):
-        count: str = request.data.get('count')
-        series: str = request.data.get('series')
-        expiration_date: str = request.data.get('expiration_date')
-
-        if (count and series and expiration_date) \
-                and (count.isdigit() and series.isdigit()) \
-                and convert_date_string_to_timedelta(expiration_date):
-            message = card_generator(int(count), series, convert_date_string_to_timedelta(expiration_date))
-            return Response(message)
+    @action(detail=False, methods=['post'])
+    def generation(self, request, pk=None):
+        """
+            Генерирует набор карт
+            Args:
+                series (int): серия
+                count (int): кол-во создаваемых карт
+                expiration_date (str): дата в формате
+                                       %Y год|года|лет %M месяц|месяца|месяцов %Y день|дня|дней
+        """
+        serializer = CardGeneratorSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response("Cards successfully created!", 201)
         else:
-            return Response({'message': "Bad Request"}, 400)
+            return Response(serializer.errors, 400)
 
-
-class CardActivateOrDeactivate(RetrieveAPIView):
-    """Контроллер Активации/Деактивации карты"""
-
-    queryset = Card.objects.all()
-    lookup_field = 'number'
-    serializer_class = CardSerializer
-
-    def get(self, request, *args, **kwargs):
-
+    @action(detail=True, methods=['get'])
+    def activate(self, request, number=None):
+        """
+        Активация/Деактивация карт
+        """
         card = self.get_object()
         if card.status == 'N':
             card.status = 'A'
